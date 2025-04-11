@@ -72,6 +72,51 @@ import FeesTypeManager from './feeRelated/FeesTypeManager.tsx';
 import FeesDiscountManager from './feeRelated/FeesDiscountManager.tsx';
 import FeesCarryForward from './feeRelated/FeesCarryForward.tsx';
 import FessReminder from './feeRelated/FessReminder.tsx';
+import AddIncome from './income/AddIncome.tsx';
+import SearchIncomePage from './income/SearchIncomePage.tsx';
+import IncomeHeadPage from './income/IncomeHeadPage.tsx';
+import AddExpenses from './Expenses/AddExpenses.tsx';
+import SearchExpensesPage from './Expenses/SearchExpensesPage.tsx';
+import ExpenseHeadPage from './Expenses/ExpenseHeadPage.tsx';
+import GroupExam from './Examination/GroupExam.tsx'
+import ExamResult from './Examination/ExamResult.tsx'
+import ExamSchedule from './Examination/ExamSchedule.tsx'
+import AdmitCardPage from './Examination/AdmitCardPage.tsx';
+import PrintAdmitCard from './Examination/PrintAdmitCard.tsx';
+import MarksGrade from './Examination/MarksGrade.tsx';
+import MarkDivision from './Examination/MarkDivision.tsx';
+import TeacherTimetable from './academics/TeacherTimetable.tsx';
+import ClassTimetable from './academics/ClassTimetable.tsx';
+import AssignClassTeacher from './academics/AssignClassTeacher.tsx';
+import PromoteStudents from './academics/PromoteStudents.tsx';
+import SubjectGroup from './academics/SubjectGroup.tsx';
+import Subjects from './academics/Subjects.tsx';
+import Classes from './academics/Classes.tsx';
+import Sections from './academics/Sections.tsx';
+import BookList from './Library/BookList.tsx';
+import IssueReturn from './Library/IssueReturn.tsx';
+import TransportFeesMaster from './transport/TransportFeesMaster.tsx';
+import PickupPointList from './transport/PickupPointList.tsx';  
+import RoutesAdd from './transport/RoutesAdd.tsx';
+import VehicleList from './transport/VehicleList.tsx';
+import AssignVehicle from './transport/AssignVehicle.tsx';
+import RoutePickupPoint from './transport/RoutePickupPoint.tsx';
+import TransportFees from './transport/TransportFees.tsx';
+import IssueItem from './inventory/IssueItem.tsx';
+import AddItemStocks from './inventory/AddItemStocks.tsx';
+import ItemList from './inventory/ItemList.tsx';
+import ItemCategory from './inventory/ItemCategory.tsx';
+import ItemStore from './inventory/ItemStore.tsx';
+import ItemSupplier from './inventory/ItemSupplier.tsx';
+
+
+
+
+
+
+
+
+
 
 
 
@@ -114,6 +159,8 @@ const AdminDashboard = () => {
                         </Typography>
                         <AccountMenu />
                     </Toolbar>
+                    
+                    
                 </AppBar>
                 <Drawer variant="permanent" open={open} sx={open ? styles.drawerStyled : styles.hideDrawer}>
                     <Toolbar sx={styles.toolBarStyled}>
@@ -204,6 +251,67 @@ const AdminDashboard = () => {
                         <Route path="/Admin/feerelated/feescarryForward" element={<FeesCarryForward />} />
                         <Route path="/Admin/feerelated/fessreminder" element={<FessReminder />} />
                        
+                        {/*income*/}
+                        <Route path="/Admin/income/addincome" element={<AddIncome />} />
+                        <Route path="/Admin/income/searchincomepage" element={<SearchIncomePage />} />
+                        <Route path="/Admin/income/incomeheadpage" element={<IncomeHeadPage />} />
+
+
+                         {/*Expenses*/}
+                         <Route path="/Admin/expenses/addexpenses" element={<AddExpenses />} />
+                         <Route path="/Admin/expenses/searchexpensespage" element={<SearchExpensesPage />} />
+                         <Route path="/Admin/expenses/expenseheadpage" element={<ExpenseHeadPage />} />
+
+
+                         {/*Examination*/}
+                         <Route path="/Admin/examination/groupexam" element={<GroupExam />} />
+                         <Route path="/Admin/examination/examschedule" element={<ExamSchedule />} />
+                        
+                         <Route path="/Admin/examination/examresult" element={<ExamResult />} />
+                         <Route path="/Admin/examination/admitcardpage" element={<AdmitCardPage/>} />
+                         <Route path="/Admin/examination/printadmitcard" element={<PrintAdmitCard/>} />
+                         <Route path="/Admin/examination/markgrade" element={<MarksGrade/>} />
+                         <Route path="/Admin/examination/markdivision" element={<MarkDivision/>} />
+
+
+                          {/*Academics*/}
+                          <Route path="/Admin/academics/teachertimetable" element={<TeacherTimetable/>} />
+                          <Route path="/Admin/academics/classtimetable" element={<ClassTimetable/>} />
+                          <Route path="/Admin/academics/assignclassteacher" element={<AssignClassTeacher/>} />
+                          <Route path="/Admin/academics/promotestudents" element={<PromoteStudents/>} />
+                          <Route path="/Admin/academics/subjectgroup" element={<SubjectGroup/>} />
+                          <Route path="/Admin/academics/subjects" element={<Subjects/>} />
+                          <Route path="/Admin/academics/Classes" element={<Classes/>} />
+                          <Route path="/Admin/academics/sections" element={<Sections/>} />
+                          <Route path="/Admin/library/booklist" element={<BookList/>} />
+                          <Route path="/Admin/library/issuereturn" element={<IssueReturn/>} />
+
+
+                        {/*Transport*/}
+                        <Route path="/Admin/transport/transportfeesmaster" element={<TransportFeesMaster/>} />
+                        <Route path="/Admin/transport/pickuppointlist" element={<PickupPointList/>} />
+                        <Route path="/Admin/transport/RoutesAdd" element={<RoutesAdd/>} />
+                        <Route path="/Admin/transport/vehiclelist" element={<VehicleList/>} />
+                        <Route path="/Admin/transport/assignvehicle" element={<AssignVehicle/>} />
+                        <Route path="/Admin/transport/routepickuppoint" element={<RoutePickupPoint/>} />
+                        <Route path="/Admin/transport/TransportFees" element={<TransportFees/>} />
+
+                        {/*Inventory*/}
+                        <Route path="/Admin/inventory/IssueItem" element={<IssueItem/>} />
+                        <Route path="/Admin/inventory/additemstocks" element={<AddItemStocks/>} />
+                        <Route path="/Admin/inventory/itemlist" element={<ItemList/>} />
+                        <Route path="/Admin/inventory/itemcategory" element={<ItemCategory/>} />
+                        <Route path="/Admin/inventory/itemstore" element={<ItemStore/>} />
+                        <Route path="/Admin/inventory/itemsupplier" element={<ItemSupplier/>} />
+
+
+
+
+
+                          
+
+
+
                        
 
 

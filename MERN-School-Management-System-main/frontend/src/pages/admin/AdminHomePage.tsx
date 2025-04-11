@@ -1,4 +1,7 @@
-import { Container, Grid, Paper } from '@mui/material';
+import { Container, Grid, Paper, IconButton, InputBase } from '@mui/material';
+import { useState, useRef, useEffect } from 'react';
+import SendIcon from '@mui/icons-material/Send';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -10,7 +13,6 @@ import Fees from "../../assets/img4.png";
 import styled from 'styled-components';
 import CountUp from 'react-countup';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import { getAllSclasses } from '../../redux/sclassRelated/sclassHandle.js';
 import { getAllStudents } from '../../redux/studentRelated/studentHandle.js';
 import { getAllTeachers } from '../../redux/teacherRelated/teacherHandle.js';
@@ -22,6 +24,12 @@ const AdminHomePage = () => {
     const { teachersList } = useSelector((state) => state.teacher);
     const { currentUser } = useSelector(state => state.user);
 
+    // AI Chat State
+    const [showChat, setShowChat] = useState(false);
+    const [message, setMessage] = useState('');
+    const [messages, setMessages] = useState([]);
+    const messagesEndRef = useRef(null);
+
     const adminID = currentUser._id;
 
     useEffect(() => {
@@ -30,9 +38,35 @@ const AdminHomePage = () => {
         dispatch(getAllTeachers(adminID));
     }, [adminID, dispatch]);
 
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
     const numberOfStudents = studentsList?.length || 0;
     const numberOfClasses = sclassesList?.length || 0;
     const numberOfTeachers = teachersList?.length || 0;
+
+    const handleSendMessage = () => {
+        if (message.trim()) {
+            const newMessage = { text: message, isBot: false };
+            setMessages(prev => [...prev, newMessage]);
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const botResponse = {
+                    text: "I'm here to help with school management queries. Ask me about student data, analytics, or system operations!",
+                    isBot: true
+                };
+                setMessages(prev => [...prev, botResponse]);
+            }, 1000);
+            
+            setMessage('');
+        }
+    };
 
     const sliderSettings = {
         dots: true,
@@ -143,6 +177,45 @@ const AdminHomePage = () => {
                     </StatsGrid>
                 </Container>
             </DashboardWrapper>
+
+            {/* AI Assistant Components */}
+            <ChatButton onClick={() => setShowChat(!showChat)}>
+                <SmartToyIcon fontSize="large" />
+                {!showChat && <ChatBubble>How can I help?</ChatBubble>}
+            </ChatButton>
+
+            {showChat && (
+                <ChatWindow>
+                    <ChatHeader>
+                        <SmartToyIcon style={{ marginRight: '10px' }} />
+                        <h3>School Management Assistant</h3>
+                        <CloseButton onClick={() => setShowChat(false)}>×</CloseButton>
+                    </ChatHeader>
+                    <ChatMessages>
+                        {messages.map((msg, index) => (
+                            <Message key={index} $isBot={msg.isBot}>
+                                {msg.text}
+                            </Message>
+                        ))}
+                        <div ref={messagesEndRef} />
+                    </ChatMessages>
+                    <ChatInput>
+                        <InputField
+                            fullWidth
+                            placeholder="Ask about students, teachers, or analytics..."
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                        />
+                        <SendButton 
+                            onClick={handleSendMessage}
+                            disabled={!message.trim()}
+                        >
+                            <SendIcon />
+                        </SendButton>
+                    </ChatInput>
+                </ChatWindow>
+            )}
         </PageContainer>
     );
 };
@@ -336,6 +409,172 @@ const NoticeSection = styled(Paper)`
   min-height: 300px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
   border: 1px solid #e2e8f0;
+`;
+
+
+
+// ... (Keep all existing styled components the same as before)
+
+/* AI Chat Components */
+const ChatButton = styled.button`
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #3B82F6;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 1000;
+
+  &:hover {
+    transform: scale(1.1) rotate(10deg);
+    background: #2563EB;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  svg {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: scale(1.1);
+  }
+`;
+
+const ChatBubble = styled.span`
+  position: absolute;
+  right: 85px;
+  background: white;
+  color: #1E293B;
+  padding: 8px 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  animation: float 3s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+`;
+
+const ChatWindow = styled.div`
+  position: fixed;
+  bottom: 120px;
+  right: 30px;
+  width: 380px;
+  height: 65vh;
+  max-height: 600px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+
+  @media (max-width: 480px) {
+    width: 90%;
+    right: 5%;
+    height: 70vh;
+  }
+`;
+
+const ChatHeader = styled.div`
+  padding: 1.2rem;
+  background: #3B82F6;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    flex-grow: 1;
+  }
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const ChatMessages = styled.div`
+  flex: 1;
+  padding: 1.2rem;
+  overflow-y: auto;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const Message = styled.div`
+  padding: 12px 16px;
+  border-radius: 15px;
+  max-width: 85%;
+  line-height: 1.4;
+  background: ${props => props.$isBot ? '#FFFFFF' : '#3B82F6'};
+  color: ${props => props.$isBot ? '#1E293B' : 'white'};
+  align-self: ${props => props.$isBot ? 'flex-start' : 'flex-end'};
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  border: ${props => props.$isBot ? '1px solid #E2E8F0' : 'none'};
+`;
+
+const ChatInput = styled.div`
+  display: flex;
+  padding: 1rem;
+  background: white;
+  border-top: 1px solid #E2E8F0;
+  gap: 8px;
+`;
+
+const InputField = styled(InputBase)`
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  font-size: 0.95rem;
+
+  &:focus-within {
+    border-color: #3B82F6;
+  }
+`;
+
+const SendButton = styled(IconButton)`
+  background: #3B82F6 !important;
+  color: white !important;
+  padding: 10px !important;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    background: #2563EB !important;
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    background: #94A3B8 !important;
+    cursor: not-allowed;
+  }
 `;
 
 export default AdminHomePage;
