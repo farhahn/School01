@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
     Box,
     Typography,
@@ -14,71 +15,70 @@ import {
     IconButton,
     InputAdornment,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import PrintIcon from '@mui/icons-material/Print';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import ViewColumnIcon from '@mui/icons-material/ViewColumn';
+import {
+    Search as SearchIcon,
+    Edit as EditIcon,
+    Delete as DeleteIcon,
+    FileCopy as FileCopyIcon,
+    Print as PrintIcon,
+    GetApp as GetAppIcon,
+    ViewColumn as ViewColumnIcon,
+} from '@mui/icons-material';
 
 const Sections = () => {
-    // State for form inputs
     const [sectionName, setSectionName] = useState('');
-
-    // State for search
     const [searchQuery, setSearchQuery] = useState('');
-
-    // State for sections list
-    const [sections, setSections] = useState([
-        { id: 1, name: 'A' },
-        { id: 2, name: 'B' },
-        { id: 3, name: 'C' },
-        { id: 4, name: 'D' },
-        { id: 5, name: 'E' },
-    ]);
-
-    // State for editing
+    const [sections, setSections] = useState([]);
     const [editId, setEditId] = useState(null);
 
-    // Handle form submission
-    const handleSubmit = (e) => {
+    // Fetch all sections from backend
+    const fetchSections = async () => {
+        try {
+            const res = await axios.get('/api/SectionList'); // adjust if base URL is set
+            setSections(res.data);
+        } catch (error) {
+            console.error('Failed to fetch sections:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSections();
+    }, []);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!sectionName) return;
 
-        if (editId) {
-            // Update existing section
-            setSections(
-                sections.map((section) =>
-                    section.id === editId ? { ...section, name: sectionName } : section
-                )
-            );
+        try {
+            if (editId) {
+                // Update section
+                await axios.put(`/api/section/${editId}`, { name: sectionName });
+            } else {
+                // Create new section
+                await axios.post('/api/SectionCreate', { name: sectionName });
+            }
+            fetchSections();
+            setSectionName('');
             setEditId(null);
-        } else {
-            // Add new section
-            const newSection = {
-                id: sections.length + 1,
-                name: sectionName,
-            };
-            setSections([...sections, newSection]);
+        } catch (error) {
+            console.error('Error saving section:', error);
         }
-
-        // Reset form
-        setSectionName('');
     };
 
-    // Handle edit
     const handleEdit = (section) => {
-        setEditId(section.id);
+        setEditId(section._id);
         setSectionName(section.name);
     };
 
-    // Handle delete
-    const handleDelete = (id) => {
-        setSections(sections.filter((section) => section.id !== id));
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`/api/section/${id}`);
+            fetchSections();
+        } catch (error) {
+            console.error('Error deleting section:', error);
+        }
     };
 
-    // Filter sections based on search query
     const filteredSections = sections.filter((section) =>
         section.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -86,19 +86,8 @@ const Sections = () => {
     return (
         <Box sx={{ display: 'flex', gap: 3, p: 3 }}>
             {/* Add Section Form */}
-            <Box
-                sx={{
-                    width: '30%',
-                    p: 3,
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '8px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                    background:'#ffffff'
-                }}
-            >
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                    Add Section
-                </Typography>
+            <Box sx={{ width: '30%', p: 3, border: '1px solid #e0e0e0', borderRadius: 2, boxShadow: 1, background: '#fff' }}>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Add Section</Typography>
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Section Name"
@@ -107,17 +96,8 @@ const Sections = () => {
                         required
                         fullWidth
                         sx={{ mb: 2 }}
-                        InputLabelProps={{ shrink: true }}
                     />
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{
-                            backgroundColor: '#1a2526',
-                            color: '#fff',
-                            '&:hover': { backgroundColor: '#2c3e50' },
-                        }}
-                    >
+                    <Button type="submit" variant="contained" sx={{ backgroundColor: '#1a2526', '&:hover': { backgroundColor: '#2c3e50' } }}>
                         Save
                     </Button>
                 </form>
@@ -125,36 +105,22 @@ const Sections = () => {
 
             {/* Section List */}
             <Box sx={{ width: '70%' }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                    Section List
-                </Typography>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Section List</Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                     <TextField
                         placeholder="Search..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon />
-                                </InputAdornment>
-                            ),
+                            startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>
                         }}
                         sx={{ width: '200px' }}
                     />
                     <Box>
-                        <IconButton sx={{ '&:hover': { color: '#1976d2' } }}>
-                            <FileCopyIcon />
-                        </IconButton>
-                        <IconButton sx={{ '&:hover': { color: '#1976d2' } }}>
-                            <PrintIcon />
-                        </IconButton>
-                        <IconButton sx={{ '&:hover': { color: '#1976d2' } }}>
-                            <GetAppIcon />
-                        </IconButton>
-                        <IconButton sx={{ '&:hover': { color: '#1976d2' } }}>
-                            <ViewColumnIcon />
-                        </IconButton>
+                        <IconButton><FileCopyIcon /></IconButton>
+                        <IconButton><PrintIcon /></IconButton>
+                        <IconButton><GetAppIcon /></IconButton>
+                        <IconButton><ViewColumnIcon /></IconButton>
                     </Box>
                 </Box>
                 <TableContainer component={Paper}>
@@ -167,21 +133,11 @@ const Sections = () => {
                         </TableHead>
                         <TableBody>
                             {filteredSections.map((section) => (
-                                <TableRow key={section.id}>
+                                <TableRow key={section._id}>
                                     <TableCell>{section.name}</TableCell>
                                     <TableCell>
-                                        <IconButton
-                                            onClick={() => handleEdit(section)}
-                                            sx={{ color: '#1976d2', '&:hover': { color: '#1565c0' } }}
-                                        >
-                                            <EditIcon />
-                                        </IconButton>
-                                        <IconButton
-                                            onClick={() => handleDelete(section.id)}
-                                            sx={{ color: '#d32f2f', '&:hover': { color: '#b71c1c' } }}
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
+                                        <IconButton onClick={() => handleEdit(section)}><EditIcon /></IconButton>
+                                        <IconButton onClick={() => handleDelete(section._id)}><DeleteIcon /></IconButton>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -189,17 +145,11 @@ const Sections = () => {
                     </Table>
                 </TableContainer>
                 <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography>
-                        Records: 1 to {filteredSections.length} of {sections.length}
-                    </Typography>
+                    <Typography>Records: 1 to {filteredSections.length} of {sections.length}</Typography>
                     <Box>
-                        <Button variant="outlined" sx={{ mr: 1 }} disabled>
-                            Previous
-                        </Button>
+                        <Button variant="outlined" disabled>Previous</Button>
                         <Button variant="contained">1</Button>
-                        <Button variant="outlined" sx={{ ml: 1 }} disabled>
-                            Next
-                        </Button>
+                        <Button variant="outlined" disabled>Next</Button>
                     </Box>
                 </Box>
             </Box>

@@ -31,6 +31,30 @@ const {
     getLibrarianDetail, 
     deleteLibrarian 
 } = require("../controllers/librarian-controller.ts");
+const { createFclass, getFclasses, updateFclass, deleteFclass } = require("../controllers/fclass-controller.ts");
+const { createSection, getSections, updateSection, deleteSection } = require('../controllers/section-controller.ts');
+// const { 
+//     createSubjectGroup, 
+//     getSubjectGroups, 
+//     getSubjectGroupById, 
+//     updateSubjectGroup, 
+//     deleteSubjectGroup 
+//   } = require('../controllers/subjectGroupController.ts');
+  
+//   router.post("/subjectgroups", createSubjectGroup);
+//   router.get("/subjectgroups", getSubjectGroups);
+//   router.get("/subjectgroups/:id", getSubjectGroupById);
+//   router.put("/subjectgroups/:id", updateSubjectGroup);
+//   router.delete("/subjectgroups/:id", deleteSubjectGroup);
+
+      
+
+
+router.post("/FclassCreate", createFclass);
+router.get("/FclassList", getFclasses);
+router.put("/Fclass/:id", updateFclass);
+router.delete("/Fclass/:id", deleteFclass);
+
 // Admin
 router.post('/AdminReg', adminRegister);
 router.post('/AdminLogin', adminLogIn);
@@ -131,6 +155,17 @@ router.post("/LibrarianLogin", librarianLogIn);
 router.get("/Librarians", getLibrarians);
 router.get("/Librarian/:id", getLibrarianDetail);
 router.delete("/Librarian/:id", deleteLibrarian);
+
+//sections
+
+// Section
+router.post('/SectionCreate', createSection);
+router.get('/SectionList', getSections);
+router.put('/Section/:id', updateSection);
+router.delete('/Section/:id', deleteSection);
+
+
+
 
 
 module.exports = router;

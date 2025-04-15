@@ -5,6 +5,8 @@ import { noticeReducer } from './noticeRelated/noticeSlice';
 import { sclassReducer } from './sclassRelated/sclassSlice';
 import { teacherReducer } from './teacherRelated/teacherSlice';
 import { complainReducer } from './complainRelated/complainSlice';
+import { fclassReducer } from "./fclass/fclassSlice.js";
+
 // import { librariansReducer } from './librarianrelated/librarianSlice';
 
 const store = configureStore({
@@ -15,6 +17,7 @@ const store = configureStore({
         notice: noticeReducer,
         complain: complainReducer,
         sclass: sclassReducer,
+        fclass: fclassReducer,
         // librarians: librariansReducer, // ✅ Key should match useSelector()
     },
 });
